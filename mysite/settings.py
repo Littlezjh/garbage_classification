@@ -140,3 +140,6 @@ WEIXIN_APP_SECRET = getLocal("WEIXIN_APP_SECRET", "")
 WEB_HOST_NAME=getLocal("WEB_HOST_NAME","")
 WEB_IMAGE_SERVER_PATH=getLocal("WEB_IMAGE_SERVER_PATH","")
 IMAGE_SAVING_PATH=getLocal("IMAGE_SAVING_PATH","")
+
+MEDIA_ROOT = os.path.join(os.path.join(BASE_DIR, 'static'),'compressed_image')
+MEDIA_URL = '/image/'

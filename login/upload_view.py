@@ -3,12 +3,14 @@ from django.shortcuts import HttpResponse
 from login import models
 import os,filetype,hashlib
 from django.conf import settings
+from django.http import FileResponse
 from PIL import Image
 
 from .models import UserInfo,ClassificationHistory
 import urllib.request,json
 from django.views.decorators.csrf import csrf_exempt
 from .search import classificationImage,compress_image
+
 
 @csrf_exempt
 def postImage(request):
@@ -38,7 +40,7 @@ def postImage(request):
             result['type']=thetype
             result['status'] = 'ok'
             id=UserInfo.objects.get(openid=openid)
-
+            #将数据存入数据库
             ClassificationHistory.objects.create(
             userid=id,
             image_path=comporessed_image,
@@ -54,13 +56,35 @@ def postImage(request):
         result['status']='not a post'
     return  HttpResponse(json.dumps(result,ensure_ascii=False),content_type="application/json,charset=utf-8")
 
+#读取最后上传图片的id
 def load_history(request):
-    id=-1
+    result=[]
     openid=request.GET.get('openid')
-    history=ClassificationHistory.objects.filter(userid=openid).order_by('-id')[:1]
+    num=int(request.GET.get('num'))
+    history=ClassificationHistory.objects.filter(userid=openid).order_by('-id')[:num]
     for i in history:
-        id=i.id
-    return HttpResponse(id)
+        temp={}
+        temp['id']=i.id
+        temp['imagePath']=i.image_md5+'.jpg'
+        temp['kind']=i.image_kind
+        temp['type']=i.image_type
+        temp['time']=i.image_date
+        temp['filePath']=''
+        result.append(temp)
+    return HttpResponse(json.dumps(result,ensure_ascii=False),content_type="application/json,charset=utf-8")
+
+#供网页下载图片文件
+def download_image(request):
+    filename=request.GET.get('imagePath')
+    dir=os.path.join(os.path.join(settings.BASE_DIR, 'static'), 'compressed_image')
+    imagePath=os.path.join(dir,filename)
+    file=open(imagePath,'rb')
+    response=FileResponse(file)
+    response['Content-Type']='image/jpeg'
+    return  response
+
+
+
 
 #计算文件的MD5
 def pCalculateMd5(file):

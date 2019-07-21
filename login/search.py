@@ -35,7 +35,7 @@ def upload(request):
 
 def classificationImage(imagePath):
     print(os.path.getsize(imagePath)/1024)
-    return '书','可回收'
+    return '书','可回收垃圾'
 
 def compress_image(infile,mb=150,step=10,quality=80):
     o_size=get_size(infile)

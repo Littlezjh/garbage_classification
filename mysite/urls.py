@@ -25,5 +25,6 @@ urlpatterns = [
     path('upload',upload_view.postImage),
     path('login',views.login),
     path('load_history',upload_view.load_history),
+    path('download',upload_view.download_image)
 
 ]

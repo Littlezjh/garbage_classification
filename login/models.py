@@ -41,7 +41,7 @@ class ClassificationHistory(models.Model):
 
     def getImagePath(self):
         filename=self.file_md5+".jpg"
-        path=settings.WEB_IMAGE_SERVER_PATH
+        path=settings.IMAGE_SAVING_PATH +filename
 
     def __str__(self):
         s = "filename:" + str(self.filename) + " - " + "filetype:" + str(self.file_type) \
